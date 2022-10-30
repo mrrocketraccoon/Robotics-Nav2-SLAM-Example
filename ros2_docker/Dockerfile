@@ -9,7 +9,8 @@ ENV GROUP_NAME=ros
 ENV WS_NAME=colcon_ws
 
 RUN echo "Set disable_coredump false" >> /etc/sudo.conf
-RUN apt-get update -q && \
+RUN sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B && \
+    apt-get update -q && \
     apt-get upgrade -yq && \
     apt-get install -yq \
         wget \
@@ -18,6 +19,7 @@ RUN apt-get update -q && \
         build-essential \
         vim \
         sudo \
+        apt-transport-https \
         gnupg2 \
         lsb-release \
         locales \
@@ -49,6 +51,7 @@ COPY ros2-setup.bash /bin/ros2-setup.bash
 # Doing a second fetch of sources & apt-get update here, because these ones depend on the state of the build context
 # in our repo
 RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 && \
+    
     curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add - && \
     echo "deb [arch=$(dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" > \
         /etc/apt/sources.list.d/ros2-latest.list && \
